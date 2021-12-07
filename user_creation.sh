@@ -80,9 +80,9 @@ create_user() {
       user:
         client-certificate-data: $CERT_DATA_PROD
         client-key-data: $KEY_DATA_PROD
-    EOF
-    
-    }
+EOF
+
+}
 
 
 usage() { printf "Usage: \n   Mandatory: User. \n   Optionals: Days (360 by default) and Group. \n   [-u user] [-d days]\n" 1>&2; exit 1; }
