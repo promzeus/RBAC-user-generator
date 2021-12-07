@@ -18,77 +18,71 @@ ca_path_prod="./pki/prod"
 
 create_user() {
     
-	mkdir -p $user_home_dev 
-	mkdir -p $user_home_prod
-	#Create private Key for the user
-	printf "Private Key creation\n"
-	openssl genrsa -out $filename_dev.key 2048
-	openssl genrsa -out $filename_prod.key 2048
-
-	#Create the CSR
-	printf "\nCSR Creation\n"
-	openssl req -new -key $filename_dev.key -out $filename_dev.csr -subj "/CN=$user"
-	openssl req -new -key $filename_prod.key -out $filename_prod.csr -subj "/CN=$user"
-
-	#Sign the CSR
-	printf "\nCertificate Creation\n"
-	openssl x509 -req -in $filename_dev.csr -CA $ca_path_dev/ca.crt -CAkey $ca_path_dev/ca.key -CAcreateserial -out $filename_dev.crt -days $days
-	openssl x509 -req -in $filename_prod.csr -CA $ca_path_prod/ca.crt -CAkey $ca_path_prod/ca.key -CAcreateserial -out $filename_prod.crt -days $days
-
-	#Create the .certs and mv the cert file in it
-	printf "\nCreate .certs directory and move the certificates in it\n"
-	mkdir $user_home_dev/.certs && mv $filename_dev.* $user_home_dev/.certs
-	mkdir $user_home_prod/.certs && mv $filename_prod.* $user_home_prod/.certs
-
-
-	#base64 data cert. Use macos gbase64 -w0 & linux base64 -w0
-	CERT_DATA_DEV=$(cat $user_home_dev/.certs/$user.crt |gbase64 -w0)
-	KEY_DATA_DEV=$(cat $user_home_dev/.certs/$user.key |gbase64 -w0)
-	CERT_DATA_PROD=$(cat $user_home_prod/.certs/$user.crt |gbase64 -w0)
-	KEY_DATA_PROD=$(cat $user_home_prod/.certs/$user.key |gbase64 -w0)
-
-	#Edit the config file
-	printf "\nConfig file edition\n"
-	mkdir $user_home/.kube
-	cat <<-EOF > $user_home/.kube/config
-	apiVersion: v1
-	clusters:
-	- cluster:
-	    certificate-authority-data: $certificate_data_dev
-	    server: $server_dev
-	  name: $cluster_name_dev
-	- cluster:
-	    certificate-authority-data: $certificate_data_prod
-	    server: $server_prod
-	  name: $cluster_name_prod
-	contexts:
-	- context:
-            cluster: $cluster_name_dev
-            namespace: $cluster_name_dev
-            user: $cluster_name_dev-$user
-          name: $cluster_name_dev
-	- context:
-            cluster: $cluster_name_prod
-            namespace: $cluster_name_prod
-            user: $cluster_name_prod-$user
-          name: $cluster_name_prod
-	current-context: $cluster_name_dev
-	kind: Config
-	preferences: {}
-	users:
-	- name: $cluster_name_dev-$user
-	  user:
-	    client-certificate-data: $CERT_DATA_DEV
-	    client-key-data: $KEY_DATA_DEV
-	- name: $cluster_name_prod-$user
-	  user:
-	    client-certificate-data: $CERT_DATA_PROD
-	    client-key-data: $KEY_DATA_PROD
-	EOF
-	
-	#Change the the ownership of the directory and all the files
-
-}
+    mkdir -p $user_home_dev 
+    mkdir -p $user_home_prod
+    #Create private Key for the user
+    printf "Private Key creation\n"
+    openssl genrsa -out $filename_dev.key 2048
+    openssl genrsa -out $filename_prod.key 2048
+    #Create the CSR
+    printf "\nCSR Creation\n"
+    openssl req -new -key $filename_dev.key -out $filename_dev.csr -subj "/CN=$user"
+    openssl req -new -key $filename_prod.key -out $filename_prod.csr -subj "/CN=$user"
+    #Sign the CSR
+    printf "\nCertificate Creation\n"
+    openssl x509 -req -in $filename_dev.csr -CA $ca_path_dev/ca.crt -CAkey $ca_path_dev/ca.key -CAcreateserial -out $filename_dev.crt -days $days
+    openssl x509 -req -in $filename_prod.csr -CA $ca_path_prod/ca.crt -CAkey $ca_path_prod/ca.key -CAcreateserial -out $filename_prod.crt -days $days
+    #Create the .certs and mv the cert file in it
+    printf "\nCreate .certs directory and move the certificates in it\n"
+    mkdir $user_home_dev/.certs && mv $filename_dev.* $user_home_dev/.certs
+    mkdir $user_home_prod/.certs && mv $filename_prod.* $user_home_prod/.certs
+    
+    #base64 data cert. Use macos gbase64 -w0 & linux base64 -w0
+    CERT_DATA_DEV=$(cat $user_home_dev/.certs/$user.crt |gbase64 -w0)
+    KEY_DATA_DEV=$(cat $user_home_dev/.certs/$user.key |gbase64 -w0)
+    CERT_DATA_PROD=$(cat $user_home_prod/.certs/$user.crt |gbase64 -w0)
+    KEY_DATA_PROD=$(cat $user_home_prod/.certs/$user.key |gbase64 -w0)
+    
+    #Edit the config file
+    printf "\nConfig file edition\n"
+    mkdir $user_home/.kube
+    cat <<-EOF > $user_home/.kube/config
+    apiVersion: v1
+    clusters:
+    - cluster:
+        certificate-authority-data: $certificate_data_dev
+        server: $server_dev
+      name: $cluster_name_dev
+    - cluster:
+        certificate-authority-data: $certificate_data_prod
+        server: $server_prod
+      name: $cluster_name_prod
+    contexts:
+    - context:
+        cluster: $cluster_name_dev
+        namespace: $cluster_name_dev
+        user: $cluster_name_dev-$user
+      name: $cluster_name_dev
+    - context:
+        cluster: $cluster_name_prod
+        namespace: $cluster_name_prod
+        user: $cluster_name_prod-$user
+      name: $cluster_name_prod
+    current-context: $cluster_name_dev
+    kind: Config
+    preferences: {}
+    users:
+    - name: $cluster_name_dev-$user
+      user:
+        client-certificate-data: $CERT_DATA_DEV
+        client-key-data: $KEY_DATA_DEV
+    - name: $cluster_name_prod-$user
+      user:
+        client-certificate-data: $CERT_DATA_PROD
+        client-key-data: $KEY_DATA_PROD
+    EOF
+    
+    }
 
 
 usage() { printf "Usage: \n   Mandatory: User. \n   Optionals: Days (360 by default) and Group. \n   [-u user] [-d days]\n" 1>&2; exit 1; }
