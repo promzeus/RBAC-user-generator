@@ -18,17 +18,17 @@ ca_path_prod="./pki/prod"
 
 create_user() {
     
-    mkdir -p $user_home_dev 
-    mkdir -p $user_home_prod
+	mkdir -p $user_home_dev 
+	mkdir -p $user_home_prod
 	#Create private Key for the user
 	printf "Private Key creation\n"
 	openssl genrsa -out $filename_dev.key 2048
-    openssl genrsa -out $filename_prod.key 2048
+	openssl genrsa -out $filename_prod.key 2048
 
 	#Create the CSR
 	printf "\nCSR Creation\n"
 	openssl req -new -key $filename_dev.key -out $filename_dev.csr -subj "/CN=$user"
-  openssl req -new -key $filename_prod.key -out $filename_prod.csr -subj "/CN=$user"
+	openssl req -new -key $filename_prod.key -out $filename_prod.csr -subj "/CN=$user"
 
 	#Sign the CSR
 	printf "\nCertificate Creation\n"
@@ -38,14 +38,14 @@ create_user() {
 	#Create the .certs and mv the cert file in it
 	printf "\nCreate .certs directory and move the certificates in it\n"
 	mkdir $user_home_dev/.certs && mv $filename_dev.* $user_home_dev/.certs
-  mkdir $user_home_prod/.certs && mv $filename_prod.* $user_home_prod/.certs
+	mkdir $user_home_prod/.certs && mv $filename_prod.* $user_home_prod/.certs
 
 
-  #base64 data cert. Use macos gbase64 -w0 & linux base64 -w0
-  CERT_DATA_DEV=$(cat $user_home_dev/.certs/$user.crt |gbase64 -w0)
-  KEY_DATA_DEV=$(cat $user_home_dev/.certs/$user.key |gbase64 -w0)
-  CERT_DATA_PROD=$(cat $user_home_prod/.certs/$user.crt |gbase64 -w0)
-  KEY_DATA_PROD=$(cat $user_home_prod/.certs/$user.key |gbase64 -w0)
+	#base64 data cert. Use macos gbase64 -w0 & linux base64 -w0
+	CERT_DATA_DEV=$(cat $user_home_dev/.certs/$user.crt |gbase64 -w0)
+	KEY_DATA_DEV=$(cat $user_home_dev/.certs/$user.key |gbase64 -w0)
+	CERT_DATA_PROD=$(cat $user_home_prod/.certs/$user.crt |gbase64 -w0)
+	KEY_DATA_PROD=$(cat $user_home_prod/.certs/$user.key |gbase64 -w0)
 
 	#Edit the config file
 	printf "\nConfig file edition\n"
@@ -63,15 +63,15 @@ create_user() {
 	  name: $cluster_name_prod
 	contexts:
 	- context:
-      cluster: $cluster_name_dev
-      namespace: $cluster_name_dev
-      user: $cluster_name_dev-$user
-      name: $cluster_name_dev
+            cluster: $cluster_name_dev
+            namespace: $cluster_name_dev
+            user: $cluster_name_dev-$user
+          name: $cluster_name_dev
 	- context:
-      cluster: $cluster_name_prod
-      namespace: $cluster_name_prod
-      user: $cluster_name_prod-$user
-      name: $cluster_name_prod
+            cluster: $cluster_name_prod
+            namespace: $cluster_name_prod
+            user: $cluster_name_prod-$user
+          name: $cluster_name_prod
 	current-context: $cluster_name_dev
 	kind: Config
 	preferences: {}
