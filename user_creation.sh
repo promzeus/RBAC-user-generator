@@ -1,6 +1,6 @@
 #!/bin/bash
 ###
-# bash ./user_creation_flags.sh -u user -d 3600
+# bash ./user_creation.sh -u user -d 3600
 ### next use rbac-manager
 # https://rbac-manager.docs.fairwinds.com/introduction/#an-example
 ###
