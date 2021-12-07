@@ -80,7 +80,7 @@ create_user() {
       user:
         client-certificate-data: $CERT_DATA_PROD
         client-key-data: $KEY_DATA_PROD
-EOF
+    EOF
 
 }
 
