@@ -46,44 +46,43 @@ create_user() {
     #Edit the config file
     printf "\nConfig file edition\n"
     mkdir $user_home/.kube
-    cat <<-EOF > $user_home/.kube/config
-    apiVersion: v1
-    clusters:
-    - cluster:
-        certificate-authority-data: $certificate_data_dev
-        server: $server_dev
-      name: $cluster_name_dev
-    - cluster:
-        certificate-authority-data: $certificate_data_prod
-        server: $server_prod
-      name: $cluster_name_prod
-    contexts:
-    - context:
-        cluster: $cluster_name_dev
-        namespace: $cluster_name_dev
-        user: $cluster_name_dev-$user
-      name: $cluster_name_dev
-    - context:
-        cluster: $cluster_name_prod
-        namespace: $cluster_name_prod
-        user: $cluster_name_prod-$user
-      name: $cluster_name_prod
-    current-context: $cluster_name_dev
-    kind: Config
-    preferences: {}
-    users:
-    - name: $cluster_name_dev-$user
-      user:
-        client-certificate-data: $CERT_DATA_DEV
-        client-key-data: $KEY_DATA_DEV
-    - name: $cluster_name_prod-$user
-      user:
-        client-certificate-data: $CERT_DATA_PROD
-        client-key-data: $KEY_DATA_PROD
-    EOF
-
+	cat <<-EOF > $user_home/.kube/config
+	apiVersion: v1
+	clusters:
+	- cluster:
+	    certificate-authority-data: $certificate_data_dev
+	    server: $server_dev
+	  name: $cluster_name_dev
+	- cluster:
+	    certificate-authority-data: $certificate_data_prod
+	    server: $server_prod
+	  name: $cluster_name_prod
+	contexts:
+	- context:
+	    cluster: $cluster_name_dev
+	    namespace: $cluster_name_dev
+	    user: $cluster_name_dev-$user
+	  name: $cluster_name_dev
+	- context:
+	    cluster: $cluster_name_prod
+	    namespace: $cluster_name_prod
+	    user: $cluster_name_prod-$user
+	  name: $cluster_name_prod
+	current-context: $cluster_name_dev
+	kind: Config
+	preferences: {}
+	users:
+	- name: $cluster_name_dev-$user
+	  user:
+	    client-certificate-data: $CERT_DATA_DEV
+	    client-key-data: $KEY_DATA_DEV
+	- name: $cluster_name_prod-$user
+	  user:
+	    client-certificate-data: $CERT_DATA_PROD
+	    client-key-data: $KEY_DATA_PROD
+	EOF
+    
 }
-
 
 usage() { printf "Usage: \n   Mandatory: User. \n   Optionals: Days (360 by default) and Group. \n   [-u user] [-d days]\n" 1>&2; exit 1; }
 
